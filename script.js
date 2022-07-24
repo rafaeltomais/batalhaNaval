@@ -86,7 +86,7 @@ var model = {
 var controller = {
     guesses: 0,
     processGuess: function(guess){
-        var location = parseGuess(guess)
+        var location = parseGuess(guess, context)
         if (location){
             this.guesses++
             var hit = model.fire(location)
@@ -96,7 +96,8 @@ var controller = {
 }
 
 //Função que transforma palpite com string números e validação do mesmo
-function parseGuess(guess){
+var context = { guesses: []}
+function parseGuess(guess, context){
     var alphabet = ["A", "B", "C", "D", "E", "F", "G"]
     if(guess === null || guess.length !== 2) alert("Ops, comece com uma Letra e um Número!")
     else{
@@ -106,7 +107,11 @@ function parseGuess(guess){
 
         if (isNaN(column)) alert("Ops, isso não está no mapa")
         else if (row < 0 || row >= model.boardSize || column < 0 || column >= model.boardSize) alert("Ops, está fora do mapa")
-        else return row + column
+        else if (context.guesses.includes(row + column)) alert("Ops, palpite repetido!")
+        else {
+            context.guesses.push(row + column)
+            return row + column
+        }
     }
     return null
 }
